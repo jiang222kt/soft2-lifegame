@@ -35,7 +35,7 @@ int output_to_life06(int filenamenum, const int height, const int width, int cel
     return points;
 }
 
-int count_adjacent_cells(int h, int w, const int height, const int width, int cell[height][width]);
+int my_count_adjacent_cells(int h, int w, const int height, const int width, int cell[height][width]);
 
 /* 'o'の連続セルをcellの2次配列を反映 */
 void partial_cell(int h,  int position,int num, const int height, const int width, int cell[height][width]){
@@ -50,7 +50,7 @@ void partial_cell(int h,  int position,int num, const int height, const int widt
 
 }
 /* RLEファイルを処理する */
-void rle_init_cells(const int height, const int width, int cell[height][width], FILE* fp){
+void rle_my_init_cells(const int height, const int width, int cell[height][width], FILE* fp){
 
     int h = 0;
     int position, i, num;
@@ -103,11 +103,10 @@ void rle_init_cells(const int height, const int width, int cell[height][width], 
  ファイルによるセルの初期化: 生きているセルの座標が記述されたファイルをもとに2次元配列の状態を初期化する
  fp = NULL のときは、関数内で適宜定められた初期状態に初期化する。関数内初期値はdefault.lif と同じもの
  */
-void init_cells(const int height, const int width, int cell[height][width], FILE* fp){
+void my_init_cells(const int height, const int width, int cell[height][width], FILE* fp){
     
     if(fp != NULL ){
         int x, y;
-
         while(fscanf(fp, "%d %d\n", &x, &y) == 2){
             cell[y][x] = 1;
         }
@@ -130,7 +129,7 @@ void init_cells(const int height, const int width, int cell[height][width], FILE
 /*
  グリッドの描画: 世代情報とグリッドの配列等を受け取り、ファイルポインタに該当する出力にグリッドを描画する
  */
-void print_cells(FILE *fp, int gen, const int height, const int width, int cell[height][width]){
+void my_print_cells(FILE *fp, int gen, const int height, const int width, int cell[height][width]){
       //上の壁
 
   fprintf(fp,"[cells alive(%%)]: %.2f%%\n", (float)count_alive_cells(height, width,cell)/(height * width)*100); // この場合 (fp = stdout), printfと同じ
@@ -169,7 +168,7 @@ void print_cells(FILE *fp, int gen, const int height, const int width, int cell[
 /*
  着目するセルの周辺の生きたセルをカウントする関数
  */
-int count_adjacent_cells(int h, int w, const int height, const int width, int cell[height][width]){
+int my_count_adjacent_cells(int h, int w, const int height, const int width, int cell[height][width]){
     int num = 0;
     for ( int i = -1; i <= 1; i = i + 2){
         // 左右のセル
@@ -195,7 +194,7 @@ int count_adjacent_cells(int h, int w, const int height, const int width, int ce
 /*
  ライフゲームのルールに基づいて2次元配列の状態を更新する
  */
-void update_cells(const int height, const int width, int cell[height][width]){
+void my_update_cells(const int height, const int width, int cell[height][width]){
     // 次世代のセルを一時保管
     int tmp_cell[40][70];
 
@@ -203,7 +202,7 @@ void update_cells(const int height, const int width, int cell[height][width]){
         for (int x = 0; x < width; x++){
             tmp_cell[y][x] = cell[y][x];
             int z;
-            z = count_adjacent_cells(y, x, height, width, cell);
+            z = my_count_adjacent_cells(y, x, height, width, cell);
             if (cell[y][x]){
                 if(z != 2 && z != 3){
                     tmp_cell[y][x] = 0;
@@ -262,12 +261,12 @@ int main(int argc, char **argv)
       sscanf(buf, "%s", filetype);
       printf("%s\n", filetype);
       if(strcmp("#Life", filetype) ==0 ){
-        init_cells(height,width,cell,lgfile); // Lifeファイルによる初期化
+        my_init_cells(height,width,cell,lgfile); // Lifeファイルによる初期化
       }else{
         if(buf[0] == '#'){
           // 2行目のヘッダーを読み捨て
           fgets(buf, 256, lgfile);
-          rle_init_cells(height,width,cell,lgfile);
+          rle_my_init_cells(height,width,cell,lgfile);
         }
       }  
     }
@@ -278,19 +277,19 @@ int main(int argc, char **argv)
     fclose(lgfile);
   }
   else{
-    init_cells(height, width, cell, NULL); // デフォルトの初期値を使う
+    my_init_cells(height, width, cell, NULL); // デフォルトの初期値を使う
   }
 
   printf("begin\n");
 
-  print_cells(fp, 0, height, width, cell); // 表示する
+  my_print_cells(fp, 0, height, width, cell); // 表示する
   sleep(1); // 1秒休止
   fprintf(fp,"\e[%dA",height+3);//height+3 の分、カーソルを上に戻す(壁2、表示部1)
 
   /* 世代を進める*/
   for (int gen = 1 ;; gen++) {
-    update_cells(height, width, cell); // セルを更新
-    print_cells(fp, gen, height, width, cell);  // 表示する
+    my_update_cells(height, width, cell); // セルを更新
+    my_print_cells(fp, gen, height, width, cell);  // 表示する
     sleep(1); //1秒休止する
     fprintf(fp,"\e[%dA",height+3);//height+3 の分、カーソルを上に戻す(壁2、表示部1)
     if ( gen % 100 == 0 && gen < 10000){
