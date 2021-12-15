@@ -1,21 +1,26 @@
 ## ライフゲームの課題について
 以下、ライフゲームの課題でやった内容を簡潔にまとめる。
 
-##追加した関数の内容
-/*
-生きているセルの総数をカウントする
- */
+## 追加した関数の内容
+
+- 生きているセルの総数をカウントする
+ 
 int count_alive_cells(const int height, const int width,  int cell[height][width]);
 
-/*
-Life1.06形式のファイルに出力する
- */
+
+- Life1.06形式のファイルに出力する
+
 int output_to_life06(int filenamenum, const int height, const int width, int cell[height][width]);
 
-/*
-RLE形式のファイルを読み込む
- */
+
+- RLE形式のファイルを読み込む
+
 void rle_my_init_cells(const int height, const int width, int cell[height][width], FILE* fp);
+
+
+- 'o'の連続セルをcellの2次配列を反映
+
+void partial_cell(int h,  int position,int num, const int height, const int width, int cell[height][width]);
 
 
 ## 課題1について
