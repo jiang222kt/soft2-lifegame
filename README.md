@@ -1,6 +1,23 @@
 ## ライフゲームの課題について
 以下、ライフゲームの課題でやった内容を簡潔にまとめる。
 
+##追加した関数の内容
+/*
+生きているセルの総数をカウントする
+ */
+int count_alive_cells(const int height, const int width,  int cell[height][width]);
+
+/*
+Life1.06形式のファイルに出力する
+ */
+int output_to_life06(int filenamenum, const int height, const int width, int cell[height][width]);
+
+/*
+RLE形式のファイルを読み込む
+ */
+void rle_my_init_cells(const int height, const int width, int cell[height][width], FILE* fp);
+
+
 ## 課題1について
 - 重複しないように乱数を生成するための種にtime関数の結果を利用する。
 - 乱数を0~0.1の範囲に変換して、0.1より小さいものを生きているセルとした。
